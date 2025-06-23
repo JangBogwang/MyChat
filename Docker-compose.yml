@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  kakao-preprocess:
+    build:
+      context: ./Preprocessing
+    container_name: kakao-preprocessor
+    depends_on:
+      - qdrant
+    volumes:
+      - ./Preprocessing:/app
+      - ./Preprocessing/kakao_data:/app/kakao_data
+      - ./Preprocessing/processed_data:/app/processed_data
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MAIN_SENDER=${MAIN_SENDER}
+      - X_API_KEY=${X_API_KEY}
+    networks:
+      - mychat-network
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+    environment:
+      QDRANT__SERVICE__API_KEY: ${X_API_KEY}
+    networks:
+      - mychat-network
+
+volumes:
+  qdrant_storage:
+
+networks:
+  mychat-network:
+    driver: bridge

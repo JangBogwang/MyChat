@@ -1,0 +1,28 @@
+# FastAPI 및 ASGI 서버
+fastapi
+uvicorn[standard]
+
+# 비동기 MySQL 드라이버
+aiomysql
+
+# SQLAlchemy ORM 비동기용
+SQLAlchemy>=1.4
+asyncmy
+
+# JWT 인증
+PyJWT
+
+# 환경변수 관리
+python-dotenv
+
+# 벡터 DB (Qdrant)
+qdrant-client
+
+# OpenAI API
+openai
+
+# 타입 힌트를 위한 패키지 (선택)
+pydantic
+
+# 응답 캐시 최적화 등 (선택)
+httpx
