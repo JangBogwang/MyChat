@@ -31,6 +31,36 @@ services:
     networks:
       - mychat-network
 
+  fastapi: 
+    build:
+      context: ./BE/Chat
+    container_name: fastapi
+    depends_on:
+      - qdrant
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_PORT=${QDRANT_PORT}
+      - X_API_KEY=${X_API_KEY}
+    networks:
+      - mychat-network
+
+    mysql:
+      image: mysql:8.0
+      container_name: mysql
+      restart: unless-stopped
+      ports:
+        - "3306:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        MYSQL_DATABASE: ${MYSQL_DB}
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      volumes:
+        - mysql_data:/var/lib/mysql
+      networks:
+        - mychat-network
+
 volumes:
   qdrant_storage:
 

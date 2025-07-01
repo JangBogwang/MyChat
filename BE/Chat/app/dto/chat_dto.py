@@ -8,9 +8,7 @@ from pydantic import BaseModel, Field, constr
 # 1. 요청 DTO (클라이언트 → 서버)
 # ───────────────────────────────
 class ChatRequest(BaseModel):
-    user_id: constr(strip_whitespace=True, min_length=1) = Field(
-        ..., description="사용자 식별자"
-    )
+    user_id: constr(strip_whitespace=True, min_length=1) = Field(..., description="사용자 식별자")
     message: str = Field(..., description="사용자 질문 또는 메시지")
 
 
