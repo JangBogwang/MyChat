@@ -29,7 +29,7 @@ async def get_recent_chats_by_user_id(db: AsyncSession, user_id: int, limit: int
         result = await db.execute(
             select(Chat)
             .filter(Chat.user_id == user_id)
-            .order_by(Chat.created_at.desc())
+            .order_by(Chat.timestamp.desc())
             .limit(limit)
         )
         chats = result.scalars().all()

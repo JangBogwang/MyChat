@@ -74,13 +74,12 @@ def upsert_pairs_to_qdrant(pairs, host, port, col, batch_size=200):
     vectors = embed_texts([p["query"] for p in pairs])
     vector_dim = len(vectors[0])
 
-    # 컬렉션 확인/생성
-    if col not in [c.name for c in client.get_collections().collections]:
-        print(f"🆕 컬렉션 '{col}' 생성 (dim={vector_dim})")
-        client.recreate_collection(
-            collection_name=col,
-            vectors_config=VectorParams(size=vector_dim, distance=Distance.COSINE)
-        )
+    # 컬렉션 재생성 (기존 데이터 삭제)
+    print(f"🔄 컬렉션 '{col}'을(를) 다시 생성합니다. (dim={vector_dim})")
+    client.recreate_collection(
+        collection_name=col,
+        vectors_config=VectorParams(size=vector_dim, distance=Distance.COSINE)
+    )
 
     print(f"📦 총 {len(pairs)}건 → {batch_size}개씩 업서트 중...")
     for idx in range(0, len(pairs), batch_size):

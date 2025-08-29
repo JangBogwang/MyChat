@@ -31,8 +31,6 @@ services:
     build:
       context: ./BE
     container_name: fastapi
-    ports:
-      - "8000:8000"
     depends_on:
       - qdrant
       - mysql
@@ -77,6 +75,18 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - mychat-network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - fastapi
     networks:
       - mychat-network
 
