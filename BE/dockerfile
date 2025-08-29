@@ -1,0 +1,24 @@
+# ./BE/Dockerfile
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# (선택) 시스템 의존 패키지
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# 의존성 설치 (requirements.txt 또는 pyproject.toml 중 사용 중인 방식에 맞추세요)
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# 🔥 핫리로드 안정화를 위해 watchfiles(또는 uvicorn[standard]) 설치 권장
+RUN pip install --no-cache-dir watchfiles uvicorn fastapi
+
+# 기본적으로 코드 파일은 런타임에 볼륨으로 마운트하므로 COPY 생략 가능
+EXPOSE 8000
+
+# 실제 실행은 compose의 command에서 수행 (--reload)
