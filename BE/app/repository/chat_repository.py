@@ -6,29 +6,20 @@ from app.config.logging_config import logger
 
 async def save_chat_message(
     db: AsyncSession,
-    user_id: int,
-    request_msg: str,
-    response_msg: str
+    user_id: str,
+    request: str,
+    response: str,
 ) -> Chat:
-    """
-    채팅 메시지를 데이터베이스에 저장합니다.
-    """
-    chat_instance = Chat(
+    """채팅 메시지를 DB에 저장"""
+    chat = Chat(
         user_id=user_id,
-        request_msg=request_msg,
-        response_msg=response_msg,
+        request=request,
+        response=response,
     )
-    
-    try:
-        db.add(chat_instance)
-        await db.commit()
-        await db.refresh(chat_instance)
-        logger.info(f"채팅 내역 저장 성공 (ID: {chat_instance.id})")
-        return chat_instance
-    except Exception as e:
-        logger.error(f"채팅 내역 저장 실패: {e}")
-        await db.rollback()
-        raise  # 오류 발생 시 상위 서비스로 전파
+    db.add(chat)
+    await db.commit()
+    await db.refresh(chat)
+    return chat
 
 async def get_recent_chats_by_user_id(db: AsyncSession, user_id: int, limit: int = 5) -> list[Chat]:
     """

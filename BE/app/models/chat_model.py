@@ -1,9 +1,8 @@
 from sqlalchemy import Column, String, Text, DateTime
-from sqlalchemy.ext.declarative import declarative_base
+from app.config.DBconfig import Base  # 수정: DBconfig에서 Base 임포트
 from datetime import datetime
 import uuid
 
-Base = declarative_base()
 
 class Chat(Base):
     __tablename__ = "chat"
