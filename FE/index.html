@@ -7,15 +7,24 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="chat-container">
+ <div class="chat-container">
+        <div class="chat-header">
+            💬 나만의 스마트 챗봇
+        </div>
         <div class="chat-messages" id="chat-messages">
-            <!-- Messages will be displayed here -->
+            <div class="message ai">
+                안녕하세요! 무엇을 도와드릴까요? 😊
+            </div>
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
         </div>
         <div class="chat-input">
             <input type="text" id="message-input" placeholder="메시지를 입력하세요...">
             <button id="send-button">전송</button>
         </div>
-    </div>
     <script src="main.js"></script>
 </body>
 </html>
