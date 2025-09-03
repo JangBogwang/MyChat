@@ -5,7 +5,6 @@ class Settings(BaseSettings):
     openai_api_key: str
     qdrant_host: str
     qdrant_port: int
-    x_api_key: str
 
     class Config:
         env_file = ".env"

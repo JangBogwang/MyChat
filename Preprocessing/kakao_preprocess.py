@@ -10,8 +10,7 @@ from qdrant_client.models import PointStruct, VectorParams, Distance
 import openai
 
 # ───────────────── 기본 설정 ─────────────────────────────────────
-MAIN_SENDER = os.getenv("MAIN_SENDER", "장보광")            # ★ 메인 화자
-QDRANT_APIKEY = os.getenv("X_API_KEY") 
+MAIN_SENDER = os.getenv("MAIN_SENDER", "홍길동")            # ★ 메인 화자 
 MODEL       = "text-embedding-3-small"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -66,7 +65,6 @@ def upsert_pairs_to_qdrant(pairs, host, port, col, batch_size=200):
     client = QdrantClient(                          # ★ API 키·HTTPS 설정
         host=host,
         port=port,
-        api_key=QDRANT_APIKEY,
         https=False,
         timeout=30.0
     )

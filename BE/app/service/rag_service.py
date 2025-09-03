@@ -7,7 +7,6 @@ from app.utils.Qdrant_client import QdrantClientAsync  # ← 앞서 제공한 As
 QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "kakao-chat")
-X_API_KEY = os.getenv("X_API_KEY", "")
 
 class RAGService:
     def __init__(self, qdrant_client: QdrantClientAsync):
@@ -18,7 +17,6 @@ class RAGService:
         qc = await QdrantClientAsync.create(
             host=QDRANT_HOST,
             port=QDRANT_PORT,
-            api_key=X_API_KEY or "",
             collection_name=QDRANT_COLLECTION,
             prefer_grpc=False,  # HTTP만 사용 → 디버깅 쉬움
             # url="https://your-domain", verify=False  # TLS 프록시 사용 시
