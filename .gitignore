@@ -1,0 +1,23 @@
+.env
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+*.log
+.pytest_cache/
+
+# IDE/Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build/Output
+processed_data/
+build/
+dist/

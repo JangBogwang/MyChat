@@ -1,0 +1,8 @@
+# 베이스 이미지 설정
+FROM nginx
+
+# Nginx 설정 파일 복사
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# FE 정적 파일 복사
+COPY FE /usr/share/nginx/html

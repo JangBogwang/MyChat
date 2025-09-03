@@ -1,0 +1,99 @@
+services:
+  kakao-preprocess:
+    build:
+      context: ./Preprocessing
+    container_name: kakao-preprocessor
+    depends_on:
+      - qdrant
+    volumes:
+      - ./Preprocessing:/app
+      - ./Preprocessing/kakao_data:/app/kakao_data
+      - ./Preprocessing/processed_data:/app/processed_data
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MAIN_SENDER=${MAIN_SENDER}
+      - X_API_KEY=${X_API_KEY}
+    networks:
+      - mychat-network
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+    environment:
+      QDRANT__SERVICE__API_KEY: ${X_API_KEY}
+    networks:
+      - mychat-network
+
+  fastapi:
+    build:
+      context: ./BE
+    container_name: fastapi
+    depends_on:
+      - qdrant
+      - mysql
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_PORT=${QDRANT_PORT}
+      - X_API_KEY=${X_API_KEY}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # ✅ 로컬 코드 폴더를 컨테이너 /app 에 마운트 (수정 → 즉시 반영)
+      - ./BE:/app
+      # (선택) .env 파일을 사용한다면 아래처럼 추가
+      # - ./BE/.env:/app/.env:ro
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+      --reload-dir /app
+      --reload-include *.py
+      --reload-include *.yaml
+      --reload-include *.yml
+      --reload-include *.json
+    networks:
+      - mychat-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mychat-network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - fastapi
+    networks:
+      - mychat-network
+
+volumes:
+  qdrant_storage:
+  mysql_data:
+
+networks:
+  mychat-network:
+    driver: bridge
