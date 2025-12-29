@@ -1,12 +1,9 @@
 # app/services/rag_service.py
-import os
 from typing import List, Sequence
 from app.config.logging_config import logger
 from app.utils.Qdrant_client import QdrantClientAsync  # ← 앞서 제공한 Async 래퍼
 
-QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
-QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
-QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "kakao-chat")
+QDRANT_COLLECTION = "kakao-chat"
 
 class RAGService:
     def __init__(self, qdrant_client: QdrantClientAsync):
@@ -14,9 +11,10 @@ class RAGService:
 
     @classmethod
     async def create(cls) -> "RAGService":
+        from app.config.Settings import settings
         qc = await QdrantClientAsync.create(
-            host=QDRANT_HOST,
-            port=QDRANT_PORT,
+            host=settings.QDRANT_HOST,
+            port=settings.QDRANT_PORT,
             collection_name=QDRANT_COLLECTION,
             prefer_grpc=False,  # HTTP만 사용 → 디버깅 쉬움
             # url="https://your-domain", verify=False  # TLS 프록시 사용 시

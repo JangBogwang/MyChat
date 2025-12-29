@@ -7,6 +7,7 @@ from app.service.chat_service import ChatService
 from app.service.rag_service import RAGService
 from app.service.llm_service import LLMService
 from app.config.DBconfig import get_async_db
+from app.config.Settings import settings
 
 router = APIRouter(prefix="/api/chat")
 
@@ -27,6 +28,10 @@ def get_chat_service(
 ) -> ChatService:
     return ChatService(rag_service=rag_service, llm_service=llm_service)
 
+@router.get("/sender")
+def get_sender():
+    return {"sender": settings.MAIN_SENDER}
+
 @router.post("/", response_model=ChatResponse)
 async def chat(
     request: ChatRequest,
@@ -34,4 +39,3 @@ async def chat(
     chat_service: ChatService = Depends(get_chat_service),
 ):
     return await chat_service.process_chat(request, db)
-

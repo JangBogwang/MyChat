@@ -44,6 +44,8 @@ body {
     overflow-y: auto;
     background: linear-gradient(to bottom, #ffecd2 0%, #fcb69f 100%);
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .chat-messages::before {

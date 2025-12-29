@@ -2,7 +2,6 @@
 import os
 import asyncio
 from typing import List, Dict, Any, Callable, TypeVar, Awaitable
-from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from openai import (
     OpenAIError,
@@ -11,8 +10,6 @@ from openai import (
     RateLimitError,
 )
 
-# 환경 변수 불러오기 
-load_dotenv()
 # Timeout은 httpx.Timeout을 그대로 쓰기보다는 client 생성 옵션으로 처리
 
 # -----------------------------
@@ -25,8 +22,9 @@ DEFAULT_MAX_TOKENS = int(os.getenv("DEFAULT_MAX_TOKENS", "256"))
 INITIAL_BACKOFF = float(os.getenv("OPENAI_BACKOFF_INITIAL", "0.5"))
 BACKOFF_FACTOR = float(os.getenv("OPENAI_BACKOFF_FACTOR", "2.0"))
 
-# OpenAI API 키는 환경변수 OPENAI_API_KEY 사용
-_client = AsyncOpenAI()  # 기본적으로 환경변수에서 키를 읽습니다.
+def get_client(api_key: str = None) -> AsyncOpenAI:
+    """AsyncOpenAI 클라이언트를 반환합니다."""
+    return AsyncOpenAI(api_key=api_key)
 
 T = TypeVar("T")
 
@@ -63,17 +61,21 @@ async def _with_retries(
 async def chat_completion(
     messages: List[Dict[str, str]],
     model: str = GPT_MODEL,
+    api_key: str = None,
     **kwargs: Any,
 ) -> str:
     """
     비동기 GPT 호출 래퍼 (v1.x)
     - messages: [{"role": "system|user|assistant", "content": "..."}]
     - model: gpt-4o 등
+    - api_key: OpenAI API 키
     - kwargs: temperature, top_p, max_tokens 등
     """
     # max_tokens 기본값 보정
     if "max_tokens" not in kwargs:
         kwargs["max_tokens"] = DEFAULT_MAX_TOKENS
+    
+    _client = get_client(api_key=api_key)
 
     async def _call():
         resp = await _client.chat.completions.create(
@@ -92,13 +94,17 @@ async def chat_completion(
 async def get_embedding(
     text: str,
     model: str = EMBEDDING_MODEL,
+    api_key: str = None,
     **kwargs: Any,
 ) -> List[float]:
     """
     비동기 OpenAI 임베딩 호출 (v1.x)
     - text: 임베딩할 텍스트
     - model: text-embedding-3-small / text-embedding-3-large 등
+    - api_key: OpenAI API 키
     """
+    _client = get_client(api_key=api_key)
+    
     async def _call():
         resp = await _client.embeddings.create(
             input=text,

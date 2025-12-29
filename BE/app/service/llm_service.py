@@ -49,6 +49,7 @@ class LLMService:
         """
         사용자 입력을 받아 최종 답변을 생성합니다.
         """
+        from app.config.Settings import settings
         logger.info(f"입력 접수: '{user_input}'")
 
         # 4. 프롬프트 생성
@@ -59,7 +60,7 @@ class LLMService:
 
         # 5. LLM을 통해 답변 생성
         try:
-            final_response = await chat_completion(messages=messages)
+            final_response = await chat_completion(messages=messages, api_key=settings.OPENAI_API_KEY)
             logger.info(f"LLM 답변 생성 완료: '{final_response}'")
         except Exception as e:
             logger.error(f"LLM 답변 생성 실패: {e}")

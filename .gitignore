@@ -6,6 +6,11 @@ __pycache__/
 *.pyc
 *.log
 .pytest_cache/
+Lib/
+Preprocessing/Lib/
+Preprocessing/Scripts/
+kakao_data/
+
 
 # IDE/Editor
 .idea/

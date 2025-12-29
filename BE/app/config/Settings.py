@@ -1,10 +1,11 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 # 로컬 환경일 경우 환경변수 주입 
 class Settings(BaseSettings):
-    openai_api_key: str
-    qdrant_host: str
-    qdrant_port: int
+    OPENAI_API_KEY: str
+    QDRANT_HOST: str
+    QDRANT_PORT: int
+    MAIN_SENDER: str
 
     class Config:
         env_file = ".env"
